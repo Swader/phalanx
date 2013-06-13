@@ -1,0 +1,13 @@
+<h3>Account activation</h3>
+<?php /** @var string $result */switch($result) : ?>
+<?php case 'no_key' : ?>
+<?php case 'no_user' : ?>
+<?php case 'wrong_key' : ?>
+        <h4 class="alert alert-error">The activation link seems to be invalid. If you need help, please contact <a href="mailto:support@tekapo.co">support</a>.</h4>
+<?php break; case 'error_activating' : ?>
+        <h4 class="alert alert-error">Something went wrong during activation. If you need help, please contact <a href="mailto:support@tekapo.co">support</a>.</h4>
+<?php break; case 'success' : ?>
+        <h4 class="alert alert-success">You have successfully activated your account. Please <a href="/users/login" title="log in">log in</a>.</h4>
+<?php break; default : ?>
+        <h4 class="alert alert-error">An unknown error has occurred. If you need help, please contact <a href="mailto:support@tekapo.co">support</a>.</h4>
+<?php endswitch;

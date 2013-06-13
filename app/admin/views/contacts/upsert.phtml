@@ -1,0 +1,38 @@
+<?php
+/** @var Contacts $contact */
+/** @var string $sHeading */
+?>
+
+<h3><?php echo $sHeading; ?></h3>
+
+<form class="form-horizontal" ng-non-bindable action="" method="post">
+    <input type="hidden" value="<?php echo $contact->getId(); ?>" name="id" />
+
+    <div class="control-group">
+        <label class="control-label" for="email">Email</label>
+        <div class="controls">
+            <input
+                type="email"
+                name="email"
+                id="email"
+                placeholder="Email"
+                value="<?php echo $contact->getEmail(); ?>"
+                >
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="controls">
+            <label class="checkbox">
+                <input
+                    type="checkbox"
+                    name="activated"
+                    value="1"
+                    <?php if ($contact->getActivated() == 1) echo "checked='checked'"; ?>
+                    > Activated
+            </label>
+            <input type="submit" name="Save" value="Save" />
+        </div>
+    </div>
+
+</form>

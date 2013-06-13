@@ -1,0 +1,54 @@
+<?php
+/** @var \Bitfalls\Objects\Result $result */
+/** @var \Bitfalls\Utilities\Pagination $pagination */
+?>
+
+    <h3>States: <?php echo $result->count(); ?> found</h3>
+
+    <form method="get" action="/admin/geo/stateslist" class="form-search">
+        <label>
+            <input
+                type="text"
+                class="input-medium search-query"
+                name="q"
+                placeholder="Search"
+                value="<?php if (isset($result->getSearchParams()['q'])) echo $result->getSearchParams()['q']; ?>"
+                />
+        </label>
+        <button type="submit" class="btn">Search</button>
+    </form>
+
+<?= $pagination; ?>
+
+    <table class="bitfalls-datagrid table-bordered table-condensed table-hover table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name (Short Name)</th>
+            <th>Country</th>
+            <th>Options</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php /** @var \States $oEntity */ ?>
+        <?php
+        foreach ($result as $oEntity) :
+            ?>
+            <tr class="unselectable">
+                <td><?php echo $oEntity->getId(); ?></td>
+                <td>
+                    <?= $oEntity->getName().' ('.$oEntity->getShortName().')' ?>
+                </td>
+                <td><?= $oEntity->country->getCountryName(); ?></td>
+                <td>
+                    <a href="/admin/geo/upsertstate/id/<?php echo $oEntity->getId(); ?>">Edit</a>
+                        |
+                        <a onclick="return confirm('Are you sure? This cannot be undone!');"
+                           href="/admin/geo/deletestate/id/<?php echo $oEntity->getId(); ?>">Delete</a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+
+<?php echo $pagination; ?>

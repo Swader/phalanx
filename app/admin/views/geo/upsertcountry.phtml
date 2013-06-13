@@ -1,0 +1,66 @@
+<?php
+/** @var Countries $oEntity */
+/** @var string $sHeading */
+use Bitfalls\Utilities\Stringer;
+
+?>
+
+<h3><?php echo $sHeading; ?></h3>
+
+<form class="form-horizontal" action="/admin/geo/upsertcountry" method="post">
+    <fieldset>
+        <input type="hidden" value="<?= $oEntity->getId(); ?>" name="id"/>
+
+        <?php
+
+        $aFields = array(
+            'country_code' => 'Country Code',
+            'country_name' => 'Country Name',
+            'iso_numeric' => 'ISO Numeric',
+            'iso_alpha3' => 'ISO alpha 3',
+            'fips' => 'FIPS',
+            'phone_code' => 'Phone Code',
+            'tld' => 'TLD',
+            'currency_code' => 'Currency Code',
+            'currency_name' => 'Currency Name',
+            'postal_format' => 'Postal Code Format',
+            'postal_regex' => 'Postal Code Regex',
+            'geonameid' => 'Geoname ID',
+            'neighbours' => 'Neighbours'
+        );
+
+        foreach ($aFields as $k => &$v) : $sMethod = 'get' . Stringer::toCamelCase($k); ?>
+            <div class="control-group">
+                <label class="control-label" for="<?= $k ?>"><?= $v ?></label>
+
+                <div class="controls">
+                    <input
+                        type="text"
+                        name="<?= $k ?>"
+                        id="<?= $k ?>"
+                        placeholder="<?= $v ?>"
+                        value="<?= $oEntity->$sMethod(); ?>"
+                        >
+                </div>
+            </div>
+        <?php endforeach; ?>
+        <div class="control-group">
+            <label class="control-label" for="continent">Continent</label>
+
+            <div class="controls">
+                <select required="required" name="continent" id="continent">
+                    <option value="">Select continent</option>
+                    <?php foreach (array('AF' => 'Africa', 'AS' => 'Asia', 'EU' => 'Europe', 'NA' => 'North America', 'OC' => 'Oceania', 'SA' => 'South America', 'AN' => 'Antarctica') as $cK => $cV) : $sSelected = ($oEntity->getContinent() == $cK) ? 'selected = "selected"' : ''; ?>
+                        <option <?= $sSelected ?> value="<?= $cK ?>"><?= $cV ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+
+    </fieldset>
+
+    <div>
+        <input type="submit" name="Save" value="Save"/>
+    </div>
+
+</form>

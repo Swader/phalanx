@@ -1,0 +1,47 @@
+<?php /** @var \Bitfalls\Objects\Result $result */ ?>
+
+<h3>Roles: <?php echo $result->count(); ?> found</h3>
+
+<form method="get" ng-non-bindable class="form-search">
+    <input
+        type="text"
+        class="input-medium search-query"
+        name="q"
+        placeholder="Search"
+        value="<?php if (isset($result->getSearchParams()['q'])) echo $result->getSearchParams()['q']; ?>"
+        />
+    <button type="submit" class="btn">Search</button>
+</form>
+
+<table class="bitfalls-datagrid table-bordered table-condensed table-striped table-hover">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Slug</th>
+        <th>Description</th>
+        <th>Users</th>
+        <th>Options</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php /** @var \UserRoles $oEntity */ ?>
+    <?php foreach ($result as $oEntity) : ?>
+        <tr>
+            <td><?php echo $oEntity->getId(); ?></td>
+            <td><?php echo $oEntity->getName(); ?></td>
+            <td><?php echo $oEntity->getSlug(); ?></td>
+            <td><?php echo $oEntity->getDescription(); ?></td>
+            <td class="td-rightalign"><?php echo (int)$oEntity->usersRoles->count(); ?></td>
+            <td>
+                <a href="/admin/roles/upsert/id/<?php echo $oEntity->getId(); ?>">Edit</a>
+                <?php if (!(int)$oEntity->usersRoles->count()): ?>
+                    |
+                    <a onclick="return confirm('Are you sure? This cannot be undone!');"
+                       href="/admin/roles/delete/id/<?php echo $oEntity->getId(); ?>">Delete</a>
+                <?php endif; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>

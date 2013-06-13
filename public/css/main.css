@@ -1,0 +1,226 @@
+/* ==========================================================================
+   Angular's cloak directive to prevent flicker
+   ========================================================================== */
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+    display: none;
+}
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+a {
+    cursor: pointer;
+}
+
+.spinner {
+    background-position: center center;
+    background-repeat: no-repeat;
+    border-radius: 50%; /* Rounds out the halo */
+    opacity: .7; /* Some subtle opacity to help blend with variable background colors */
+    float: left;
+    margin-right: 15px;
+}
+.spinner.large {
+    height: 52px; width: 52px;
+    background: url("/img/spiffygif_52x52.gif");
+}
+
+.formparent form {
+    margin: 20px auto 50px auto;
+}
+
+.w206 {
+    width: 206px;
+    display: block;
+}
+
+.line30 {
+    line-height: 30px;
+}
+
+.unselectable {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+input.error {
+    border: 1px solid red;
+}
+
+div.thumbContainer {
+    border: 1px solid silver;
+    background-color: whitesmoke;
+    padding: 10px;
+    margin: 5px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+img.thumb {
+    width: 100px;
+}
+
+.addressCard {
+    max-width: 500px;
+}
+
+.addressCard.default {
+    border-color: green;
+    background-color: #DFF0D8;
+}
+
+.margin20ud {
+    margin: 20px 0px;
+}
+.margin20u {
+    margin: 20px 0 0 0;
+}
+
+.table tr.success>td{background-color:#dff0d8;}
+.table tr.error>td{background-color:#f2dede;}
+.table tr.warning>td{background-color:#fcf8e3;}
+.table tr.info>td{background-color:#d9edf7;}
+.table-hover tr.success:hover>td{background-color:#d0e9c6;}
+.table-hover tr.error:hover>td{background-color:#ebcccc;}
+.table-hover tr.warning:hover>td{background-color:#faf2cc;}
+.table-hover tr.info:hover>td{background-color:#c4e3f3;}
+.errorColor {
+color: red;
+    }
+tr.odd td {
+background-color: #f9f9f9;
+    }
+td.options-row {
+    border-top: 1px solid #DDDDDD;
+    text-align: right !important;
+    padding-right: 10px;
+}
+td.table-label {
+    font-weight: bold;
+    text-align: center;
+}
+.width90percent {
+    width: 90%;
+}
+.nomargin {
+    margin: 0 !important;
+}
+.main-content{
+    margin-top:100px;
+}
+.main-content.sub-main {margin-top: 0}
+.main-content-search-area {
+    text-align: center;
+}
+.header-content-search-area {
+    background-color: whitesmoke;
+    border-bottom: 1px solid silver;
+    position: fixed;
+    top: 41px;
+    left: 0;
+    width: 100%;
+    padding: 2px 0 0 10px;
+    height: 42px;
+    line-height: 38px;
+}
+.header-content-search-area p {
+    float:left;
+}
+.header-content-search-area div.divset {
+    margin-left: 10px;
+}
+.header-content-search-area button {
+    margin: 0 10px;
+}
+.header-content-search-area label {
+    margin: 0 0 0 10px;
+    line-height: inherit;
+    float: left;
+}
+.header-content-search-area label input {
+    margin: 0;
+    max-width: 300px;
+}
+.header-content-search-area div.socialicons {
+    margin: 9px 20px 0 0;
+}
+
+form.hz-form {
+    display: inline;
+}
+
+dl.spreadOutList dd {
+    line-height: 28px;
+}
+dl.spreadOutList dt {
+    margin-top: 5px;
+    line-height: 28px;
+}
+
+.main-content.p1020 {
+    max-width: 1020px;
+    margin: auto;
+}
+header nav p {
+    margin: 0 10px;
+}
+
+.alert-nomargin {
+    margin: 0;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+}
+
+.alert a {
+    cursor: pointer;
+}
+
+.moduleMenu {
+    height: 36px;
+}
+
+span.nope {
+    display: block;
+    max-width: 10px;
+    margin: auto;
+    font-weight: bold;
+}
+
+.red {
+    color: red;
+}
+
+table.bitfalls-datagrid {
+    width: 100%;
+}
+
+table.bitfalls-datagrid td:last-child, table.bitfalls-datagrid td:first-child  {text-align: center}
+
+a.logo {
+    display: block;
+    width: 600px;
+    height: 260px;
+    /*
+    background: url(/img/frontpage.png) no-repeat 0 0;
+    */
+    background: url(http://placehold.it/600x260&text=Logo+here);
+    margin:auto;
+}
+
+td.td-rightalign {text-align: right}
+
+/* PRODUCTS */
+
+
+div.product-picture {
+    width: 50px;
+    height: 50px;
+    margin: 5px auto;
+}
+div.product-picture.sample {
+    background: url(http://placehold.it/50&text=pic);
+}

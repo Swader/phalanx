@@ -1,0 +1,65 @@
+<?php
+/** @var \Bitfalls\Objects\Result $result */
+/** @var \Bitfalls\Utilities\Pagination $pagination */
+?>
+
+<h3>Contacts: <?php echo $result->count(); ?> found</h3>
+
+<form method="get" ng-non-bindable class="form-search">
+    <input
+        type="text"
+        class="input-medium search-query"
+        name="q"
+        placeholder="Search"
+        value="<?php if (isset($result->getSearchParams()['q'])) echo $result->getSearchParams()['q']; ?>"
+        />
+    <button type="submit" class="btn">Search</button>
+</form>
+
+<?= $pagination; ?>
+
+<table class="bitfalls-datagrid table-bordered table-condensed table-striped table-hover">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Email</th>
+        <th>Belongs To</th>
+        <th>Activated</th>
+        <th>Created</th>
+        <th>Options</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php /** @var \Contacts $oContact */ ?>
+    <?php foreach ($result as $oContact) : ?>
+        <tr>
+            <td><?php echo $oContact->getId(); ?></td>
+            <td><?php echo $oContact->getEmail(); ?></td>
+            <td>
+                <?php
+                    if ($oContact->user) {
+                        echo '<a href="/admin/users/list/id/' . $oContact->user->getId() . '">' . $oContact->user->getFullName() . "</a>";
+                        if ($oContact->user == $oContact->mainFor) {
+                            echo ' (main)';
+                        }
+                    } else {
+                        echo '<span class="nope">&times;</span>';
+                    }
+                ?>
+            </td>
+            <td><?php echo ((bool)$oContact->getActivatedOn()) ? $oContact->getActivatedOn() : "<span class='nope'>&times;</span>"; ?></td>
+            <td><?php echo $oContact->getCreatedOn(); ?></td>
+            <td>
+                <a href="/admin/contacts/upsert/id/<?php echo $oContact->getId(); ?>">Edit</a>
+                <?php if (!(bool)$oContact->user) : ?>
+                    |
+                    <a onclick="return confirm('Are you sure? This cannot be undone!');"
+                       href="/admin/contacts/delete/id/<?php echo $oContact->getId(); ?>">Delete</a>
+                <?php endif; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<?php echo $pagination; ?>

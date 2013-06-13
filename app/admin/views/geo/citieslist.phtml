@@ -1,0 +1,67 @@
+<?php
+/** @var \Bitfalls\Objects\Result $result */
+/** @var \Bitfalls\Utilities\Pagination $pagination */
+?>
+
+<h3>Cities: <?php echo $result->count(); ?> found</h3>
+
+<form method="get" action="/admin/geo/citieslist" class="form-search">
+    <label>
+        <input
+            type="text"
+            class="input-medium search-query"
+            name="q"
+            placeholder="Search"
+            value="<?php if (isset($result->getSearchParams()['q'])) echo $result->getSearchParams()['q']; ?>"
+            />
+    </label>
+    <button type="submit" class="btn">Search</button>
+</form>
+
+<?= $pagination; ?>
+
+<table class="bitfalls-datagrid table-bordered table-condensed table-hover table-striped">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name (Clean name)</th>
+        <th>Lat / Long</th>
+        <th>State</th>
+        <th>Country</th>
+        <th>Zip</th>
+        <th>Options</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php /** @var \Cities $oEntity */ ?>
+    <?php
+    foreach ($result as $oEntity) :
+        ?>
+        <tr class="unselectable">
+            <td><?php echo $oEntity->getId(); ?></td>
+            <td>
+                <?php
+                echo $oEntity->getName();
+                if ($oEntity->getName() != $oEntity->getCleanName()) {
+                    echo ' ('.$oEntity->getCleanName().')';
+                }
+                ?>
+            </td>
+            <td><?= $oEntity->getLatitude().' / '.$oEntity->getLongitude(); ?></td>
+            <td><?= ($oEntity->state) ? $oEntity->state->getName().'('.$oEntity->state->getShortName().')' : 'n/a'; ?></td>
+            <td><?= $oEntity->country->getCountryName(); ?></td>
+            <td><?= $oEntity->getZip(); ?></td>
+            <td>
+                <a href="/admin/geo/upsertcity/id/<?php echo $oEntity->getId(); ?>">Edit</a>
+                <?php if ($oEntity->addresses->count() == 0) : ?>
+                |
+                <a onclick="return confirm('Are you sure? This cannot be undone!');"
+                   href="/admin/geo/deletecity/id/<?php echo $oEntity->getId(); ?>">Delete</a>
+                <?php endif; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<?php echo $pagination; ?>

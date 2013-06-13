@@ -1,0 +1,273 @@
+<?php
+/** @var \Users $oUser */
+/** @var int $average */
+/** @var int $averagePerMonth */
+?>
+<h2>Account Settings for <?= $oUser->getFullName(); ?></h2>
+<tabs>
+<pane heading="My Account">
+    <form class="form-horizontal" action="/users/myaccount" method="post">
+        <fieldset>
+            <legend><span id="name" class="w206"><?= $oUser->getFullName(); ?><a
+                        ng-click="showNameEditForm = true"
+                        ng-show="!showNameEditForm"
+                        class="pull-right">Edit</a></span></legend>
+            <input type="hidden" value="<?php echo $oUser->getId(); ?>" name="id"/>
+
+            <p>Joined on <?= $oUser->getCreatedOn(true); ?>.</p>
+
+            <div ng-show="showNameEditForm" class="ng-cloak">
+                <div class="control-group">
+                    <label class="control-label" for="first_name">First Name</label>
+
+                    <div class="controls">
+                        <input
+                            type="text"
+                            required="required"
+                            name="first_name"
+                            id="first_name"
+                            placeholder="First Name"
+                            value="<?php echo $oUser->getFirstName(); ?>"
+                            >
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="last_name">Last Name</label>
+
+                    <div class="controls">
+                        <input
+                            type="text"
+                            required="required"
+                            name="last_name"
+                            id="last_name"
+                            placeholder="Last Name"
+                            value="<?php echo $oUser->getLastName(); ?>"
+                            >
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group ng-cloak" ng-show="showNameEditForm">
+                <label class="control-label" for="last_name">&nbsp;</label>
+
+                <div class="controls">
+                    <button
+                        ng-click="showNameEditForm = false"
+                        class="btn btn-small"
+                        onclick="return false;"
+                        >Cancel
+                    </button>
+                </div>
+            </div>
+
+        </fieldset>
+
+        <fieldset>
+            <legend>Emails</legend>
+            <table class="table-bordered table-hover table-condensed table-striped">
+                <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Default</th>
+                    <th>Options</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                /** @var Contacts $oContact */
+                foreach (Users::getCurrent()->contacts as $oContact) : ?>
+                    <tr>
+                        <td>
+                            <label for="c<?= $oContact->getId() ?>"><?= $oContact->getEmail() ?><br/>
+                                <?php
+                                $sStatusMessage = '';
+                                if ($oContact->getId() == $oUser->getMainContactId()) {
+                                    $sStatusMessage .= 'Default email. ';
+                                }
+                                if ($oContact->getActivated()) {
+                                    $sStatusMessage .= 'Activated on ' . $oContact->getActivatedOn(true);
+                                } else {
+                                    $sStatusMessage .= 'Not activated.';
+                                }
+                                echo $sStatusMessage;
+                                ?>
+                            </label>
+                        </td>
+                        <td style="text-align: center"><input style="margin: 0"
+                                                              type="radio"
+                                                              name="mainEmail"
+                                                              value="<?= $oContact->getId() ?>"
+                                                              id="c<?= $oContact->getId() ?>"
+                                <?php if (Users::getCurrent()->getMainContactId() == $oContact->getId()) echo "checked = 'checked'"; ?>
+                                />
+                        </td>
+                        <td style="text-align: center">
+                            <?php if ($oContact->getActivated() == 0) : ?>
+                                <a ng-click="resendActivationEmail(<?= $oContact->getId() ?>)"
+                                   title="Resend Activation Email"
+                                   ng-hide="hidden<?= $oContact->getId() ?>"
+                                    >
+                                    <i
+                                        class="icon-envelope"></i></a>
+                            <?php endif; ?>
+                            <?php if (Users::getCurrent()->getMainContactId() != $oContact->getId()) : ?>
+                                <a title="Delete this address"
+                                   onclick="return confirm('Are you sure? This will permanently unassociate this email address and your user account!')"
+                                   href="/users/deletecontact?id=<?= $oContact->getId(); ?>" class="errorColor"
+                                    ><i class="icon-remove"></i></a>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+            <hr/>
+            <label for="newContactInput">Add new email (saved when entire form is submitted): </label>
+            <input type="email" placeholder="new email" name="newContact" id="newContactInput"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>Change Password</legend>
+
+            <div class="control-group">
+                <label class="control-label" for="username">Username</label>
+
+                <div class="controls line30">
+                    <span id="name"><?= $oUser->getUsername(); ?> (cannot be changed)</span>
+                </div>
+            </div>
+
+
+            <div class="control-group">
+                <label class="control-label" for="password">New Password <a
+                        onclick="document.getElementById('password_warning').style.display = (document.getElementById('password_warning').style.display == 'none') ? '' : 'none'">?</a></label>
+
+                <div class="controls">
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder="Leave empty to keep old"
+                        >
+
+                    <p class="alert alert-info" id="password_warning" style="display: none; margin-top: 20px;">
+                        Please note that if you choose to alter your password, you are responsible for its safety.
+                        Do not
+                        give it to anyone. No one affiliated with this website will ever ask you for it. You and
+                        only you
+                        are responsible for making it secure - our passwords are stored in an encrypted database
+                        that is
+                        virtually unhackable, but if your password is weak and simple or too related to you, it
+                        might be
+                        easily discoverable.
+                        <br/>
+                        <br/>
+                        Your best bet is making it as complex as possible, while still keeping it memorable for
+                        yourself.
+                        Use punctuation, numbers and a mixture of upper and lower case letters for best results.
+                        Also, the
+                        longer your password, the more difficult it is to crack.
+                    </p>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="confirm_password">Confirm New Password</label>
+
+                <div class="controls">
+                    <input
+                        type="password"
+                        name="confirm_password"
+                        id="confirm_password"
+                        placeholder="Leave empty to keep old"
+                        >
+                </div>
+            </div>
+        </fieldset>
+
+        <input type="submit" id="formSubmitButton" name="Submit" value="Save" class="btn btn-primary"/>
+
+
+    </form>
+</pane>
+
+<?php
+$bExperimental = false;
+if ($bExperimental) : ?>
+<pane heading="Emails">
+    <fieldset ng-controller="EmailsController">
+        <legend>Email addresses</legend>
+
+            <dl class="spreadOutList">
+                <contactentry ng-repeat="email in emailsForUser" input="email"></contactentry>
+                <div ng-show="showNewEmail" style="margin-top: 5px;">
+                    <contactentry></contactentry>
+                </div>
+            </dl>
+            <button ng-show="!showNewEmail" type="button" class="btn" ng-click="newEmail()">Add New Email</button>
+            <button ng-show="showNewEmail" type="button" class="btn ng-cloak" ng-click="cancelNewEmail()">
+                Cancel
+            </button>
+    </fieldset>
+</pane>
+<?php endif; ?>
+
+<!-- Uncomment to get address book functionality on accounts -->
+<!--
+<pane heading="Addresses">
+    <legend>Manage your addresses</legend>
+    <div ng-controller="AddressesGridCtrl">
+
+        <button ng-show="!showNewAddress" type="button" class="btn" ng-click="newAddress()">Add New Address</button>
+        <button ng-show="showNewAddress" type="button" class="btn ng-cloak" ng-click="cancelNewAddress()">
+            Cancel
+        </button>
+        <br/>
+        <br/>
+
+        <div ng-show="showNewAddress">
+            <address></address>
+        </div>
+
+        <hr/>
+
+        <h4 class="alert alert-danger ng-cloak" ng-show="!addressesForUser.length">You have no addresses. Until you
+            add
+            some, you will be unable to fully use
+            the site.</h4>
+
+        <address ng-repeat="add in addressesForUser" entryid="add.id" id="addressCard{{entryid}}">
+            <button type="button" class="btn btn-mini" ng-click="makeDefault(add.id)">
+                Make Default
+            </button>
+            <button type="button" class="btn btn-mini" ng-click="deleteAddress(add.id)">
+                Delete
+            </button>
+        </address>
+
+    </div>
+</pane>
+-->
+
+</tabs>
+
+
+<script type="text/javascript">
+
+    function checkEqual(e) {
+        var check = (e.target.id == 'password') ? 'confirm_password' : 'password';
+        check = document.getElementById(check);
+        if (e.target.value == check.value) {
+            document.getElementById('formSubmitButton').disabled = '';
+            e.target.className = check.className = "";
+        } else {
+            document.getElementById('formSubmitButton').disabled = 'disabled';
+            e.target.className = check.className = "error";
+        }
+    }
+
+    document.getElementById('password').onkeyup = checkEqual;
+    document.getElementById('confirm_password').onkeyup = checkEqual;
+
+</script>

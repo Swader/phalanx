@@ -1,0 +1,457 @@
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
+
+
+-- -----------------------------------------------------
+-- Table `contacts`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `contacts` ;
+
+CREATE  TABLE IF NOT EXISTS `contacts` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `email` VARCHAR(155) NULL ,
+  `user_id` INT UNSIGNED NULL ,
+  `activated` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
+  `activated_on` DATETIME NULL ,
+  `activation_key` VARCHAR(64) NULL ,
+  `created_on` DATETIME NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_contacts_1_idx` (`user_id` ASC) ,
+  UNIQUE INDEX `emailunique` (`email` ASC) ,
+  CONSTRAINT `fk_contacts_1`
+    FOREIGN KEY (`user_id` )
+    REFERENCES `users` (`id` )
+    ON DELETE SET NULL
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `users`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `users` ;
+
+CREATE  TABLE IF NOT EXISTS `users` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `username` VARCHAR(45) NOT NULL ,
+  `first_name` VARCHAR(45) NULL ,
+  `last_name` VARCHAR(45) NULL ,
+  `password` VARCHAR(128) NOT NULL ,
+  `created_on` DATETIME NULL ,
+  `created_by` INT UNSIGNED NULL DEFAULT NULL ,
+  `type` TINYINT(2) UNSIGNED NOT NULL DEFAULT 1 ,
+  `password_reset_hash` VARCHAR(200) NULL ,
+  `main_contact_id` INT UNSIGNED NOT NULL ,
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `username_UNIQUE` (`username` ASC) ,
+  INDEX `fk_users_1_idx` (`created_by` ASC) ,
+  INDEX `mainContactId` (`main_contact_id` ASC) ,
+  UNIQUE INDEX `mainContactId_UNIQUE` (`main_contact_id` ASC) ,
+  CONSTRAINT `fk_users_1`
+    FOREIGN KEY (`created_by` )
+    REFERENCES `users` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `mainContactId`
+    FOREIGN KEY (`main_contact_id` )
+    REFERENCES `contacts` (`id` )
+    ON DELETE RESTRICT
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
+
+
+-- -----------------------------------------------------
+-- Table `address_residence_types`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `address_residence_types` ;
+
+CREATE  TABLE IF NOT EXISTS `address_residence_types` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `slug` VARCHAR(25) NOT NULL ,
+  `name` VARCHAR(45) NOT NULL ,
+  `description` TEXT NULL ,
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `slug_UNIQUE` (`slug` ASC) ,
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `countries`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `countries` ;
+
+CREATE  TABLE IF NOT EXISTS `countries` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `country_code` VARCHAR(2) NOT NULL ,
+  `country_name` VARCHAR(45) NOT NULL ,
+  `iso_numeric` VARCHAR(3) NULL ,
+  `iso_alpha3` VARCHAR(3) NULL ,
+  `fips` VARCHAR(2) NULL ,
+  `continent` VARCHAR(2) NULL ,
+  `phone_code` VARCHAR(10) NULL ,
+  `tld` VARCHAR(3) NULL ,
+  `currency_code` VARCHAR(3) NULL ,
+  `currency_name` VARCHAR(20) NULL ,
+  `postal_format` VARCHAR(55) NULL ,
+  `postal_regex` VARCHAR(155) NULL ,
+  `geonameid` VARCHAR(7) NULL ,
+  `neighbours` VARCHAR(45) NULL ,
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `country_code_UNIQUE` (`country_code` ASC) ,
+  UNIQUE INDEX `iso_numeric_UNIQUE` (`iso_numeric` ASC) ,
+  UNIQUE INDEX `iso_alpha3_UNIQUE` (`iso_alpha3` ASC) ,
+  UNIQUE INDEX `fips_UNIQUE` (`fips` ASC) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `states`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `states` ;
+
+CREATE  TABLE IF NOT EXISTS `states` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(45) NULL ,
+  `short_name` VARCHAR(10) NOT NULL ,
+  `country_id` INT UNSIGNED NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_states_1_idx` (`country_id` ASC) ,
+  CONSTRAINT `fk_states_1`
+    FOREIGN KEY (`country_id` )
+    REFERENCES `countries` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `cities`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `cities` ;
+
+CREATE  TABLE IF NOT EXISTS `cities` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(100) NOT NULL ,
+  `clean_name` VARCHAR(100) NOT NULL ,
+  `latitude` DECIMAL(15,10) NULL ,
+  `longitude` DECIMAL(15,10) NULL ,
+  `state_id` INT UNSIGNED NULL ,
+  `country_id` INT UNSIGNED NOT NULL ,
+  `zip` VARCHAR(10) NULL ,
+  `geonameid` VARCHAR(7) NULL ,
+  `alternativenames` TEXT NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_cities_1_idx` (`state_id` ASC) ,
+  INDEX `fk_cities_2_idx` (`country_id` ASC) ,
+  CONSTRAINT `fk_cities_1`
+    FOREIGN KEY (`state_id` )
+    REFERENCES `states` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_cities_2`
+    FOREIGN KEY (`country_id` )
+    REFERENCES `countries` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `address_book`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `address_book` ;
+
+CREATE  TABLE IF NOT EXISTS `address_book` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `first_name` VARCHAR(45) NOT NULL ,
+  `last_name` VARCHAR(45) NOT NULL ,
+  `city` INT UNSIGNED NOT NULL ,
+  `street` VARCHAR(155) NOT NULL ,
+  `zip` VARCHAR(10) NULL ,
+  `user_id` INT UNSIGNED NOT NULL ,
+  `is_def` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Default address?' ,
+  `residence_type` VARCHAR(25) NOT NULL ,
+  `phone` VARCHAR(25) NULL ,
+  `additional_info` TEXT NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_address_book_1_idx` (`user_id` ASC) ,
+  INDEX `fk_address_book_2_idx` (`residence_type` ASC) ,
+  INDEX `fk_address_book_3_idx` (`city` ASC) ,
+  CONSTRAINT `fk_address_book_1`
+    FOREIGN KEY (`user_id` )
+    REFERENCES `users` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_address_book_2`
+    FOREIGN KEY (`residence_type` )
+    REFERENCES `address_residence_types` (`slug` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_address_book_3`
+    FOREIGN KEY (`city` )
+    REFERENCES `cities` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
+
+
+-- -----------------------------------------------------
+-- Table `user_roles`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `user_roles` ;
+
+CREATE  TABLE IF NOT EXISTS `user_roles` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(45) NOT NULL ,
+  `slug` VARCHAR(45) NOT NULL ,
+  `description` TEXT NULL ,
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `slug_UNIQUE` (`slug` ASC) ,
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `users_roles`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `users_roles` ;
+
+CREATE  TABLE IF NOT EXISTS `users_roles` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `role_slug` VARCHAR(45) NOT NULL ,
+  `user_id` INT UNSIGNED NOT NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_users_roles_1_idx` (`role_slug` ASC) ,
+  INDEX `fk_users_roles_2_idx` (`user_id` ASC) ,
+  UNIQUE INDEX `uniqueuserrole` (`role_slug` ASC, `user_id` ASC) ,
+  CONSTRAINT `fk_users_roles_1`
+    FOREIGN KEY (`role_slug` )
+    REFERENCES `user_roles` (`slug` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_users_roles_2`
+    FOREIGN KEY (`user_id` )
+    REFERENCES `users` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `recent_searches`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `recent_searches` ;
+
+CREATE  TABLE IF NOT EXISTS `recent_searches` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `user_id` INT UNSIGNED NULL ,
+  `query` VARCHAR(155) NOT NULL ,
+  `created_on` DATETIME NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_recent_search_1_idx` (`user_id` ASC) ,
+  CONSTRAINT `fk_recent_search_1`
+    FOREIGN KEY (`user_id` )
+    REFERENCES `users` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `settings`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `settings` ;
+
+CREATE  TABLE IF NOT EXISTS `settings` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `key` VARCHAR(45) NULL ,
+  `value` TEXT NULL ,
+  `user_id` INT UNSIGNED NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_settings_1_idx` (`user_id` ASC) ,
+  UNIQUE INDEX `index3` (`key` ASC, `user_id` ASC) ,
+  CONSTRAINT `fk_settings_1`
+    FOREIGN KEY (`user_id` )
+    REFERENCES `users` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `errors`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `errors` ;
+
+CREATE  TABLE IF NOT EXISTS `errors` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `url` TEXT NOT NULL ,
+  `user_id` INT UNSIGNED NULL ,
+  `stack_trace` TEXT NULL ,
+  `details` TEXT NULL ,
+  `type` VARCHAR(10) NOT NULL ,
+  `code` INT(5) NOT NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_errors_1_idx` (`user_id` ASC) ,
+  CONSTRAINT `fk_errors_1`
+    FOREIGN KEY (`user_id` )
+    REFERENCES `users` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `tag_types`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `tag_types` ;
+
+CREATE  TABLE IF NOT EXISTS `tag_types` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `type` VARCHAR(45) NOT NULL ,
+  `description` TEXT NULL ,
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `type_UNIQUE` (`type` ASC) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `tags`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `tags` ;
+
+CREATE  TABLE IF NOT EXISTS `tags` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `tag` VARCHAR(35) NOT NULL ,
+  `parent` INT UNSIGNED NULL DEFAULT 0 ,
+  `tag_type` INT UNSIGNED NOT NULL ,
+  `description` TEXT NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `tag_type_fk_bind_idx` (`tag_type` ASC) ,
+  INDEX `tag_parent_self_bind_idx` (`parent` ASC) ,
+  UNIQUE INDEX `tag_uniquepertype` (`tag` ASC, `tag_type` ASC) ,
+  CONSTRAINT `tag_type_fk_bind`
+    FOREIGN KEY (`tag_type` )
+    REFERENCES `tag_types` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `tag_parent_self_bind`
+    FOREIGN KEY (`parent` )
+    REFERENCES `tags` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `entities`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `entities` ;
+
+CREATE  TABLE IF NOT EXISTS `entities` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `entity` VARCHAR(45) NOT NULL ,
+  `references` VARCHAR(45) NULL ,
+  `description` TEXT NULL ,
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `entity_UNIQUE` (`entity` ASC) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `tag_bind`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `tag_bind` ;
+
+CREATE  TABLE IF NOT EXISTS `tag_bind` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `tag` INT UNSIGNED NOT NULL ,
+  `entity_type` VARCHAR(45) NULL ,
+  `entity_id` VARCHAR(45) NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `tag_id_from_bind_idx` (`tag` ASC) ,
+  INDEX `entity_type_from_bind_idx` (`entity_type` ASC) ,
+  CONSTRAINT `tag_id_from_bind`
+    FOREIGN KEY (`tag` )
+    REFERENCES `tags` (`id` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `entity_type_from_bind`
+    FOREIGN KEY (`entity_type` )
+    REFERENCES `entities` (`entity` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `emails_templates`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `emails_templates` ;
+
+CREATE  TABLE IF NOT EXISTS `emails_templates` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(45) NOT NULL ,
+  `slug` VARCHAR(45) NOT NULL ,
+  `subject` VARCHAR(255) NOT NULL ,
+  `body` TEXT NULL ,
+  `body_html` TEXT NULL ,
+  `template_info` TEXT NULL COMMENT 'Information about this template. When is it sent, why, etc.' ,
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `slug_UNIQUE` (`slug` ASC) ,
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `emails_queue`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `emails_queue` ;
+
+CREATE  TABLE IF NOT EXISTS `emails_queue` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `created_on` DATETIME NULL ,
+  `to_be_sent_on` DATETIME NULL ,
+  `sent_on` DATETIME NULL ,
+  `priority` INT NULL ,
+  `serialized_recipient` VARCHAR(255) NULL ,
+  `serialized_sender` VARCHAR(255) NULL ,
+  `headers` TEXT NULL ,
+  `sent` TINYINT(1) NULL DEFAULT 0 ,
+  `email_object` MEDIUMBLOB NULL ,
+  `slug` VARCHAR(45) NULL ,
+  `blobhash` VARCHAR(32) NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `email_slug_from_queue_idx` (`slug` ASC) ,
+  CONSTRAINT `email_slug_from_queue`
+    FOREIGN KEY (`slug` )
+    REFERENCES `emails_templates` (`slug` )
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `remembered_sessions`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `remembered_sessions` ;
+
+CREATE  TABLE IF NOT EXISTS `remembered_sessions` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `usernamehashed` VARCHAR(128) NULL ,
+  `cookievaluehashed` VARCHAR(128) NULL ,
+  `created_on` DATETIME NULL ,
+  PRIMARY KEY (`id`) )
+ENGINE = InnoDB;
+
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

@@ -1,0 +1,57 @@
+<?php
+/** @var \Bitfalls\Objects\Result $result */
+/** @var \Bitfalls\Utilities\Pagination $pagination */
+?>
+
+<h3>Users: <?php echo $result->count(); ?> found</h3>
+
+<form method="get" ng-non-bindable class="form-search">
+    <input
+        type="text"
+        class="input-medium search-query"
+        name="q"
+        placeholder="Search"
+        value="<?php if (isset($result->getSearchParams()['q'])) echo $result->getSearchParams()['q']; ?>"
+        />
+    <button type="submit" class="btn">Search</button>
+</form>
+
+<?= $pagination; ?>
+
+<table class="bitfalls-datagrid table-bordered table-condensed table-striped table-hover">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Contact Email</th>
+        <th>Username</th>
+        <th>Created</th>
+        <th>Options</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php /** @var \Users $oUser */ ?>
+    <?php foreach ($result as $oUser) : ?>
+        <tr>
+            <td><?php echo $oUser->getId(); ?></td>
+            <td><?php echo $oUser->getFullName(); ?></td>
+            <td>
+                <a href="mailto:<?php echo $oUser->mainContact->getEmail(); ?>"><?php echo $oUser->mainContact->getEmail(); ?></a>
+            </td>
+            <td><?php echo $oUser->getUsername(); ?></td>
+            <td>
+                <?php if ($oUser->creator) echo $oUser->creator->getFullName().', '; else echo '<span class="nope">&times;</span>'; ?>
+                <?php echo $oUser->getCreatedOn(); ?>
+            </td>
+            <td>
+                <a href="/admin/users/upsert/id/<?php echo $oUser->getId(); ?>">Edit</a>
+                |
+                <a onclick="return confirm('Are you sure? This cannot be undone!');"
+                   href="/admin/users/delete/id/<?php echo $oUser->getId(); ?>">Delete</a>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<?php echo $pagination; ?>

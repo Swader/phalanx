@@ -1,0 +1,48 @@
+<?php /** @var bool $loggedIn */ /** @var bool $registered */
+if (!$loggedIn && !isset($registered)) : ?>
+
+    <div class="well span5 signForm">
+        <form action="/users/register" method="post">
+            <h3>Register an Account</h3>
+
+            <label for="email">Email</label>
+            <input id="email" required="required" type="email" name="email" class="span4">
+
+            <label for="email_confirm">Confirm Email</label>
+            <input required="required" id="email_confirm" type="email" name="email_confirm" class="span4">
+
+            <label for="username">Username</label>
+            <input required="required" id="username" type="text" name="username" class="span4">
+
+            <label for="firstname">First Name</label>
+            <input required="required" id="firstname" type="text" name="firstname" class="span4">
+
+            <label for="lastname">Last Name</label>
+            <input required="required" id="lastname" type="text" name="lastname" class="span4">
+
+            <label for="password">Password</label>
+            <input required="required" id="password" type="password" name="password" class="span4">
+
+            <label for="password_confirm">Confirm Password</label>
+            <input required="required" id="password_confirm" type="password" name="password_confirm" class="span4">
+
+            <br>
+
+            <input type="submit" value="Sign Up »" class="btn btn-primary">
+        </form>
+    </div>
+
+    <?php elseif (isset($registered) && $registered) : ?>
+
+        <div class="alert alert-success">
+            <h3>Success!</h3>
+            <p>Successfully registered! An activation email has been sent to your email address - please read it and
+                click the link within to activate your account.</p>
+        </div>
+
+    <?php else : ?>
+
+        <h3 class="alert alert-info">You are already logged in. To register a new account, you first need to <a
+                href="/users/logout" title="Log out">log out</a>.</h3>
+
+    <?php endif; ?>

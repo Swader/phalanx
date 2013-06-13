@@ -1,0 +1,128 @@
+<div id="thisMightTakeAWhile" style="display: none">
+    <h4 class="alert alert-info" style="min-height: 60px">
+        <div class="spinner large"></div>
+        Harvesting, please wait.
+        <br/>
+        This might take time, depending on number of new insertions. Once done, a report will be shown. Please leave
+        this browser tab open and come back to it.
+    </h4>
+</div>
+
+<div id="importforms" class="formparent">
+
+    <h4 class="alert alert-info">You can initialize the auto-import of countries/cities/states here. The imports are performed by harvesting the <a href="" title="Geomind">Geomind database</a> and usually don't need to be re-initiated unless there was a database corruption of some sort.</h4>
+
+    <?php if (Countries::count() > 250) : ?>
+        <h4 class="alert alert-success">Country count seems to be healthy. The countries database should not require any updates.</h4>
+    <?php else : ?>
+        <h4 class="alert alert-danger">There seems to be an issue with the number of countries. A re-import might help.</h4>
+    <?php endif; ?>
+
+    <?php if (Cities::count() > 130000) : ?>
+        <h4 class="alert alert-success">City count seems to be healthy. The cities database should not require any updates.</h4>
+    <?php else : ?>
+        <h4 class="alert alert-danger">There seems to be an issue with the number of cities. A re-import might help.</h4>
+    <?php endif; ?>
+
+    <h4>Import countries</h4>
+
+    <form action="/admin/geo" method="post" enctype="multipart/form-data">
+        <input
+            class="btn btn-primary"
+            type="submit"
+            name="onlineimport"
+            value="Import from Geomind"
+            onclick="
+                document.getElementById('thisMightTakeAWhile').style.display = '';
+                document.getElementById('importforms').style.display = 'none';
+                "
+            />
+        <input type="hidden" name="type" value="country"/>
+    </form>
+
+    <h4>Import cities (might take up to an hour or more)</h4>
+
+    <form action="/admin/geo" method="post" enctype="multipart/form-data">
+        <input
+            class="btn btn-primary"
+            type="submit"
+            name="onlineimport"
+            value="Import from Geomind"
+            id="cityImportButton"
+            onclick="
+                document.getElementById('thisMightTakeAWhile').style.display = '';
+                document.getElementById('importforms').style.display = 'none';
+                "
+            />
+        <div class="control-group">
+            <div class="controls">
+                <label class="checkbox">
+                    <input
+                        type="checkbox"
+                        name="ignoreExisting"
+                        value="1"
+                        checked="checked"
+                        > Ignore existing? (much faster, but doesn't reset cities to default value. When unchecked, all cities are re-harvested and saved, which can take a while)
+                </label>
+            </div>
+        </div>
+
+        <input type="hidden" name="type" value="city"/>
+    </form>
+</div>
+<?php
+$maxLineLength = 120;
+if (isset($errors) && !empty($errors)) : ?>
+    <table class="table table-bordered table-striped table-hover">
+        <thead>
+        <tr class="error">
+            <td colspan="3" class="table-label">Errors (<?= count($errors); ?>)</td>
+        </tr>
+        <tr>
+            <th>#</th>
+            <th>Line content</th>
+            <th>Reason</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($errors as $i => &$a) : ?>
+            <tr ng-dblclick="showHiddenRow<?= $i ?> = !showHiddenRow<?= $i ?>">
+                <td><?= $i; ?></td>
+                <td><?= (strlen($a['line']) > $maxLineLength) ? substr($a['line'], 0, $maxLineLength - 3) . '...' : $a['line']; ?></td>
+                <td><?= $a['reason']; ?><?= (isset($a['stack'])) ? ' (full error stack available - double click row)' : '' ?></td>
+            </tr>
+            <?php if (isset($a['stack'])) : ?>
+                <tr>
+                    <td class="ng-cloak" ng-show="showHiddenRow<?= $i; ?>" colspan="3">
+                        <pre><?= $a['stack']; ?></pre>
+                    </td>
+                </tr>
+            <?php endif; ?>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php endif; ?>
+
+<?php if (isset($successes) && !empty($successes)) : ?>
+    <table class="table table-bordered table-striped table-hover">
+        <thead>
+        <tr class="success">
+            <td colspan="3" class="table-label">Successes (<?= count($successes); ?>)</td>
+        </tr>
+        <tr>
+            <th>#</th>
+            <th>Line content</th>
+            <th>Reason</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($successes as $i => &$a) : ?>
+            <tr>
+                <td><?= $i; ?></td>
+                <td><?= (strlen($a['line']) > $maxLineLength) ? substr($a['line'], 0, $maxLineLength - 3) . '...' : $a['line']; ?></td>
+                <td><?= $a['reason']; ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php endif; ?>

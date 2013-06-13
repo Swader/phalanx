@@ -1,0 +1,74 @@
+<?php
+/** @var \Bitfalls\Objects\Result $result */
+/** @var \Bitfalls\Utilities\Pagination $pagination */
+?>
+
+    <h3>Countries: <?php echo $result->count(); ?> found</h3>
+
+    <form method="get" action="/admin/geo/countrieslist" class="form-search">
+        <label>
+            <input
+                type="text"
+                class="input-medium search-query"
+                name="q"
+                placeholder="Search"
+                value="<?php if (isset($result->getSearchParams()['q'])) echo $result->getSearchParams()['q']; ?>"
+                />
+        </label>
+        <button type="submit" class="btn">Search</button>
+    </form>
+
+<?= $pagination; ?>
+
+    <table class="bitfalls-datagrid table-bordered table-condensed table-hover table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Country Code</th>
+            <th>Country Name</th>
+            <th>ISO numeric</th>
+            <th>ISO alpha3</th>
+            <th>FIPS</th>
+            <th>Continent</th>
+            <th>Phone Code</th>
+            <th>TLD</th>
+            <th>Currency (code)</th>
+            <th>Postal Format</th>
+            <th>Postal Regex</th>
+            <th>Geoname ID</th>
+            <th>Neighbours</th>
+            <th>Options</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php /** @var \Countries $oEntity */ ?>
+        <?php
+        foreach ($result as $oEntity) :
+            ?>
+            <tr class="unselectable">
+                <td><?php echo $oEntity->getId(); ?></td>
+                <td><?= $oEntity->getCountryCode(); ?></td>
+                <td><?= $oEntity->getCountryName(); ?></td>
+                <td><?= $oEntity->getIsoNumeric(); ?></td>
+                <td><?= $oEntity->getIsoAlpha3(); ?></td>
+                <td><?= $oEntity->getFips(); ?></td>
+                <td><?= $oEntity->getContinent(); ?></td>
+                <td><?= $oEntity->getPhoneCode(); ?></td>
+                <td><?= $oEntity->getTld(); ?></td>
+                <td><?= $oEntity->getCurrencyName().' ('.$oEntity->getCurrencyCode().')'; ?></td>
+                <td><?= $oEntity->getPostalFormat(); ?></td>
+                <td><a href="javascript:alert(<?= '\''.$oEntity->getPostalRegex().'\''; ?>)">?</a></td>
+                <td><?= $oEntity->getGeonameid(); ?></td>
+                <td><?= $oEntity->getNeighbours(); ?></td>
+                <td>
+                    <a href="/admin/geo/upsertcountry/id/<?php echo $oEntity->getId(); ?>">Edit</a>
+                    |
+                    <a onclick="return confirm('Are you sure? This cannot be undone!');"
+                       href="/admin/geo/deletecountry/id/<?php echo $oEntity->getId(); ?>">Delete</a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+
+<?php echo $pagination; ?>

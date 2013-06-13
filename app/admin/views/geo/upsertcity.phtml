@@ -1,0 +1,74 @@
+<?php
+/** @var Cities $oEntity */
+/** @var string $sHeading */
+use Bitfalls\Utilities\Stringer;
+
+?>
+
+<h3><?php echo $sHeading; ?></h3>
+
+<form class="form-horizontal" action="/admin/geo/upsertcity" method="post">
+    <fieldset>
+        <input type="hidden" value="<?= $oEntity->getId(); ?>" name="id"/>
+
+        <?php
+
+        $aFields = array(
+            'name' => 'Name',
+            'clean_name' => 'Clean Name',
+            'latitude' => 'Latitude',
+            'longitude' => 'Longitude'
+        );
+
+        foreach ($aFields as $k => &$v) : $sMethod = 'get' . Stringer::toCamelCase($k); ?>
+            <div class="control-group">
+                <label class="control-label" for="<?= $k ?>"><?= $v ?></label>
+
+                <div class="controls">
+                    <input
+                        type="text"
+                        required="required"
+                        name="<?= $k ?>"
+                        id="<?= $k ?>"
+                        placeholder="<?= $v ?>"
+                        value="<?= $oEntity->$sMethod(); ?>"
+                        >
+                </div>
+            </div>
+        <?php endforeach; ?>
+        <div class="control-group">
+            <label class="control-label" for="state">State</label>
+
+            <div class="controls">
+                <select name="state_id" id="state">
+                    <option value="">Select state [optional]</option>
+                    <?php
+                    /** @var States $cV */
+                    foreach (States::find(array('order' => 'name, short_name ASC')) as $cV) : $sSelected = ($oEntity->getStateId() == $cV->getId()) ? 'selected = "selected"' : ''; ?>
+                        <option <?= $sSelected ?> value="<?= $cV->getId(); ?>"><?= $cV->getName().' ('.$cV->getShortName().') in '.$cV->country->getCountryName(); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="country">Country</label>
+
+            <div class="controls">
+                <select required="required" name="country_id" id="country">
+                    <option value="">Select country</option>
+                    <?php
+                    /** @var string $cV */
+                    foreach (Countries::getCachedPairs() as $cK => $cV) : $sSelected = ($oEntity->getCountryId() == $cK) ? 'selected = "selected"' : ''; ?>
+                        <option <?= $sSelected ?> value="<?= $cK ?>"><?= $cV ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+
+    </fieldset>
+
+    <div>
+        <input type="submit" name="Save" value="Save"/>
+    </div>
+
+</form>

@@ -1,0 +1,27 @@
+<h3>Password reset</h3>
+<?php /** @var string $result */switch($result) : ?>
+<?php case 'no_user' : ?>
+        <h4 class="alert alert-error">The link seems to be invalid. If you need help, please contact <a href="mailto:support@tekapo.co">support</a>.</h4>
+<?php break; case 'no_match' : ?>
+        <h4 class="alert alert-error">The passwords don't match.</h4>
+<?php break; case 'success' : ?>
+        <h4 class="alert alert-success">You have successfully reset your password. Please <a href="/users/login" title="log in">log in</a>.</h4>
+<?php break; default : ?>
+<?php endswitch; ?>
+
+<?php if ($result == 'no_match' || !$result) : ?>
+<form method="post" action="/users/resetpass">
+    <label>Password: <input type="password" name="password" /></label>
+    <label>Confirm: <input type="password" name="password_confirm" /></label>
+    <input type="hidden" value="<?php echo $sHash; ?>" name="hash" />
+    <input type="submit" class="btn btn-primary" value="Change Password" name="submit" />
+</form>
+
+    <p class="alert alert-info" id="password_warning" style="margin-top: 20px;">
+        Please note that if you choose to alter your password, you are responsible for its safety. Do not give it to anyone. No one affiliated with this website will ever ask you for it. You and only you are responsible for making it secure - our passwords are stored in an encrypted database that is virtually unhackable, but if your password is weak and simple or too related to you, it might be easily discoverable.
+        <br />
+        <br />
+        Your best bet is making it as complex as possible, while still keeping it memorable for yourself. Use punctuation, numbers and a mixture of upper and lower case letters for best results. Also, the longer your password, the more difficult it is to crack.
+    </p>
+
+<?php endif; ?>

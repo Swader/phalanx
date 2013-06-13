@@ -1,0 +1,68 @@
+<?php
+/** @var \Bitfalls\Objects\Result $result */
+/** @var \Bitfalls\Utilities\Pagination $pagination */
+?>
+
+<h3>Tags: <?php echo $result->count(); ?> found</h3>
+
+<form method="get" action="/admin/tag/list" class="form-search">
+    <label>
+        <input
+            type="text"
+            class="input-medium search-query"
+            name="q"
+            placeholder="Search"
+            value="<?php if (isset($result->getSearchParams()['q'])) echo $result->getSearchParams()['q']; ?>"
+            />
+    </label>
+    <button type="submit" class="btn">Search</button>
+</form>
+
+<?= $pagination; ?>
+
+<table class="bitfalls-datagrid table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Tag</th>
+        <th>Parent</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Usages</th>
+        <th>Options</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php /** @var \Tags $oEntity */ ?>
+    <?php $row = 'even';
+    foreach ($result as $oEntity) :
+        $row = ($row == 'even') ? 'odd' : 'even';
+        ?>
+        <tr class="unselectable <?= $row ?>">
+            <td><?php echo $oEntity->getId(); ?></td>
+            <td>
+                <?= $oEntity->getTag() ?>
+            </td>
+            <td>
+                <?php if ($oEntity->getParent()) : ?>
+                <a href="/admin/tag/list/id/<?php echo $oEntity->parent->getId(); ?>"
+                   title="<?php echo $oEntity->parent->getTag(); ?>"><?php echo $oEntity->parent->getTag(); ?></a>
+        <?php else : ?>
+                    n/a
+                <?php endif; ?>
+        </td>
+            <td><?php echo ($oEntity->type->getType()) ?: 'n/a'; ?></td>
+            <td><?php echo ($oEntity->getDescription()) ?: 'n/a'; ?></td>
+            <td><?php echo $oEntity->binds->count(); ?></td>
+            <td>
+                <a href="/admin/tag/upsert/id/<?php echo $oEntity->getId(); ?>">Edit</a>
+                |
+                <a onclick="return confirm('Are you sure? This cannot be undone!');"
+                   href="/admin/tag/delete/id/<?php echo $oEntity->getId(); ?>">Delete</a>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<?php echo $pagination; ?>

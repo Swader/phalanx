@@ -1,0 +1,84 @@
+<?php
+/** @var \Bitfalls\Objects\Result $result */
+/** @var \Bitfalls\Utilities\Pagination $pagination */
+?>
+
+<h3>Emails in archive and queue: <?php echo $result->count(); ?> found</h3>
+
+<form method="get" action="/admin/emails/listq" class="form-search">
+    <input
+        type="text"
+        class="input-medium search-query"
+        name="q"
+        placeholder="Search"
+        value="<?php if (isset($result->getSearchParams()['q'])) echo $result->getSearchParams()['q']; ?>"
+        />
+    <button type="submit" class="btn">Search</button>
+</form>
+
+<?= $pagination; ?>
+
+<table class="bitfalls-datagrid table-bordered table-condensed table-striped table-hover">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Slug</th>
+        <th>Recipient</th>
+        <th>Sender</th>
+        <th>Created</th>
+        <th>To be sent on</th>
+        <th>Sent on</th>
+        <th>Priority</th>
+        <th>Options</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php /** @var \EmailsQueue $oEntity */ ?>
+    <?php foreach ($result as $oEntity) : ?>
+        <tr>
+            <td><?php echo $oEntity->getId(); ?></td>
+            <td><?php echo $oEntity->getSlug(); ?></td>
+            <td>
+                <?php
+                $sString = '';
+                    $m = unserialize($oEntity->getSerializedRecipient());
+                    if (is_array($m)) {
+                        foreach ($m as $k=>&$v) {
+                            $v = $k.' ('.$v.')';
+                        }
+                        $sString = implode(', ', $m);
+                    } else {
+                        $sString = (string)$m;
+                    }
+                    echo $sString;
+                ?>
+            </td>
+            <td>
+                <?php
+                $sString = '';
+                    $m = unserialize($oEntity->getSerializedSender());
+                    if (is_array($m)) {
+                        foreach ($m as $k=>&$v) {
+                            $v = $k.' ('.$v.')';
+                        }
+                        $sString = implode(', ', $m);
+                    } else {
+                        $sString = (string)$m;
+                    }
+                    echo $sString;
+                ?>
+            </td>
+            <td><?php echo $oEntity->getCreatedOn(); ?></td>
+            <td><?php echo ($oEntity->getSent()) ? 'n/a' : $oEntity->getToBeSentOn(); ?></td>
+            <td><?php echo ($oEntity->getSent()) ? $oEntity->getSentOn() : 'n/a'; ?></td>
+            <td><?php echo (string)$oEntity->getPriority(); ?></td>
+            <td>
+                <a onclick="return confirm('Are you sure? This cannot be undone!');"
+                   href="/admin/emails/deleteq/id/<?php echo $oEntity->getId(); ?>"><?php echo ($oEntity->getSent()) ? 'Delete' : 'Unqueue'; ?></a>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<?php echo $pagination; ?>

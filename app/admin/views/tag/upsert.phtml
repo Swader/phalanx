@@ -1,0 +1,89 @@
+<?php
+/** @var Tags $oEntity */
+/** @var string $sHeading */
+?>
+
+<h3><?php echo $sHeading; ?></h3>
+
+<form class="form-horizontal" action="/admin/tag/upsert" method="post">
+    <input type="hidden" value="<?php echo $oEntity->getId(); ?>" name="id" />
+
+    <div class="control-group">
+        <label class="control-label" for="tag">Tag</label>
+        <div class="controls">
+            <input
+                type="text"
+                name="tag"
+                id="tag"
+                required="required"
+                placeholder="Tag name"
+                value="<?php echo $oEntity->getTag(); ?>"
+                >
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="parent">Parent Tag</label>
+
+        <div class="controls">
+            <select name="parent" id="parent">
+                <option value="">Top level tag</option>
+                <?php
+                /** @var Tags $oSubentity */
+                foreach (Tags::find() as $oSubentity) : ?>
+                    <?php
+                    $sSelected = '';
+                    if ($oSubentity->getId() == $oEntity->getParent()) {
+                        $sSelected = 'selected = "selected"';
+                    }
+                    if ($oEntity->getId() != $oSubentity->getId()) :
+                    ?>
+                    <option
+                        <?= $sSelected; ?>
+                        value="<?= $oSubentity->getId(); ?>"><?= $oSubentity->getTag(); ?></option>
+                <?php endif; endforeach;
+                ?>
+            </select>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="tag_type">Tag Type</label>
+
+        <div class="controls">
+            <select name="tag_type" id="tag_type" required="required">
+                <option value="">Select type</option>
+                <?php
+                /** @var TagTypes $oSubentity1 */
+                foreach (TagTypes::find() as $oSubentity1) : ?>
+                    <?php
+                    $sSelected = '';
+                    if ($oSubentity1->getId() == $oEntity->getTagType()) {
+                        $sSelected = 'selected = "selected"';
+                    }
+                    ?>
+                    <option
+                        <?= $sSelected; ?>
+                        value="<?= $oSubentity1->getId(); ?>"><?= $oSubentity1->getType(); ?></option>
+                <?php endforeach;
+                ?>
+            </select>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="description">Description</label>
+
+        <div class="controls">
+            <textarea
+                placeholder="Description"
+                name="description"
+                id="description"><?php echo $oEntity->getDescription(); ?></textarea>
+        </div>
+    </div>
+
+    <div>
+        <input type="submit" name="Save" value="Save"/>
+    </div>
+
+</form>

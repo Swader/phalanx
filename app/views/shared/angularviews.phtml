@@ -1,0 +1,390 @@
+<!-- ROOT PAGE -->
+<script type="text/ng-template" id="root.html">
+    <div class="main-content sub-main ng-cloak">
+        <div class="main-content-search-area">
+            <a href="/" class="logo"></a>
+            <br/>
+
+            <div>
+                <searchbox ac="/search/autocomplete" ctrlfn="doSearch(query)"></searchbox>
+            </div>
+        </div>
+    </div>
+</script>
+
+<!-- SEARCH BOX -->
+<script type="text/ng-template" id="searchboxtpl.html">
+    <label><input
+            type="text"
+            on-keyup="enter" do="ctrlfn({query:searchQuery})"
+            class="span10"
+            ng-model="searchQuery"
+            typeahead-min-length="3"
+            typeahead="suggestion for suggestion in autocomplete($viewValue)">
+    </label>
+    <button class="btn btn-primary" ng-click="ctrlfn({query:searchQuery})">Search!</button>
+</script>
+
+<!-- RESULTS -->
+<script type="text/ng-template" id="results.html">
+    <div class="search-results" ng-cloak>
+        <h3>Search results for: <span ng-cloak>{{ DataService.term }}</span></h3>
+        <table class="mainSearchResults table table-bordered table-hover">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Product</th>
+                <th>Buy</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <tr class="search-item product unselectable" ng-repeat="product in products">
+                <th>
+                    <div class="product-picture sample"></div>
+                </th>
+                <td>
+                    {{ product.name }}<br/>{{ product.short_description || "No description"}}
+                    <!--                    <div class="skuSubSet ng-cloak" ng-show="subsku.show">-->
+                    <!--                        <div class="spinner large" ng-hide="subsku.found"></div>-->
+                    <!--                        <ul ng-show="subsku.found">-->
+                    <!--                            <li ng-repeat="sku in subsku.results">sku.name</li>-->
+                    <!--                        </ul>-->
+                    <!--                    </div>-->
+                </td>
+                <td>
+                    <a class="btn btn-small" ng-click="cart.addItem(product.id, product.name, product.price, 1)">
+                        add to cart
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+<script type="text/ng-template" id="editableList.html">
+
+</script>
+
+<!-- EMAIL LIST -->
+<script type="text/ng-template" id="emaillisttpl.html">
+    <dl>
+        <contactentry ng-repeat="email in useremails" email="email"></contactentry>
+    </dl>
+</script>
+
+<!-- CONTACT FOR EMAIL LIST -->
+<script type="text/ng-template" id="contactTpl.html">
+    <dt>
+    <span ng-show="entryExists && !beingEdited">
+        {{ entry.email }}
+    </span>
+    <form autocomplete="off" ng-show="!entryExists || beingEdited" method="post" class="hz-form">
+        <input type="email" name="email" placeholder="email" value="{{ entry.email }}" />
+    </form>
+    <button ng-hide="beingEdited || !entryExists" ng-show="never" ng-click="beingEdited = true" type="button" class="btn btn-mini"
+                style="margin-left:20px">Edit
+        </button>
+        <button ng-show="beingEdited" ng-click="beingEdited = false" type="button" class="btn btn-mini"
+                style="margin-left:20px">Cancel
+        </button>
+        <button ng-hide="beingEdited || !entryExists" ng-click="delete()" type="button" class="btn btn-mini btn-danger"
+                style="margin-left:10px">Delete
+        </button>
+        <button ng-show="beingEdited || !entryExists" ng-click="save()" type="button" class="btn btn-mini btn-success"
+                style="margin-left:10px">Save
+        </button>
+    </dt>
+
+    <dd><input type="text" value="{{ entry.statusMessage }}"/>{{ entry.statusMessage }}</dd>
+</script>
+
+
+<!-- ADDRESS -->
+<script type="text/ng-template" id="address.html">
+    <div class="address ng-cloak">
+
+        <div ng-show="newAddressForm.id && !editing"
+             class="addressCard well {{(newAddressForm.is_def == 1) && 'default' || ''}}">
+            <div>{{ newAddressForm.first_name }} {{ newAddressForm.last_name }}</div>
+            <div>{{ newAddressForm.street }}, {{ newAddressForm.residence_type_name }}</div>
+            <div>{{ newAddressForm.zip }}, {{ newAddressForm.city_name }}</div>
+            <div>{{ newAddressForm.country_name }}</div>
+            <div>{{ newAddressForm.phone || "n/a" }}</div>
+            <div ng-show="newAddressForm.additional_info" class="well margin20ud"><b>Additional info:</b> {{
+                newAddressForm.additional_info }}
+            </div>
+            <div class="controls margin20u" ng-transclude>
+                <button type="button" class="btn btn-mini" ng-click="editAddress(true)">
+                    Edit
+                </button>
+            </div>
+        </div>
+
+        <form autocomplete="off" ng-show="!newAddressForm.id || editing" class="well addressCard form-horizontal"
+              method="post" ng-submit="saveAddress()">
+            <input type="hidden" name="id" ng-model="newAddressForm.id"/>
+
+            <div class="control-group">
+                <label class="control-label" for="first_name">First Name</label>
+
+                <div class="controls">
+                    <input
+                        type="text"
+                        required="required"
+                        name="first_name"
+                        id="first_name"
+                        placeholder="First Name"
+                        ng-model="newAddressForm.first_name"
+                        >
+                </div>
+            </div>
+
+
+            <div class="control-group">
+                <label class="control-label" for="last_name">Last Name</label>
+
+                <div class="controls">
+                    <input
+                        type="text"
+                        required="required"
+                        name="last_name"
+                        id="last_name"
+                        placeholder="Last Name"
+                        ng-model="newAddressForm.last_name"
+                        >
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="country_id">Country</label>
+
+                <div class="controls">
+                    <select name="country_id"
+                            id="country_id"
+                            required="required"
+                            ng-model="newAddressForm.country_id"
+                            ng-options="country.id as country.name for country in countries">
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="city">City</label>
+
+                <div class="controls">
+                    <select name="city" id="city" required="required" ng-model="newAddressForm.city">
+                        <option value="">Select City</option>
+                        <option ng-repeat="city in cities" value="{{city.id}}">{{city.name}}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="zip">ZIP</label>
+
+                <div class="controls">
+                    <input
+                        type="text"
+                        required="required"
+                        name="zip"
+                        id="zip"
+                        ng-model="newAddressForm.zip"
+                        placeholder="ZIP code"
+                        >
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="street">Street</label>
+
+                <div class="controls">
+                    <input
+                        type="text"
+                        required="required"
+                        name="street"
+                        id="street"
+                        ng-model="newAddressForm.street"
+                        placeholder="Street"
+                        >
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="residence_type">Residence Type</label>
+
+                <div class="controls">
+                    <select name="residence_type" id="residence_type" required="required"
+                            ng-model="newAddressForm.residence_type">
+                        <option value="">Select Residence Type</option>
+                        <option ng-repeat="rt in residence_types" value="{{rt.slug}}">{{rt.name}}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="phone">Phone</label>
+
+                <div class="controls">
+                    <input
+                        type="text"
+                        required="required"
+                        name="phone"
+                        id="phone"
+                        ng-model="newAddressForm.phone"
+                        placeholder="Phone"
+                        >
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="additional_info">Additional info</label>
+
+                <div class="controls">
+                    <textarea
+                        name="additional_info"
+                        id="additional_info"
+                        ng-model="newAddressForm.additional_info"
+                        placeholder="Additional info. Floor, apt. number, office building number, things to look out for, etc."
+                        ></textarea>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <div class="controls">
+                    <button type="submit" class="btn btn-mini ng-cloak">
+                        Save
+                    </button>
+                    <button type="button" class="btn btn-mini ng-cloak" ng-click="resetForm()">
+                        Reset Form
+                    </button>
+                    <button ng-show="editing" type="button" class="btn btn-mini ng-cloak" ng-click="cancelEditing()">
+                        Cancel Editing
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+</script>
+
+<!-- SHOPPING CART -->
+<script type="text/ng-template" id="shoppingcarttpl.html">
+    ﻿<p class="text-info">
+        This is your shopping cart. Here you can edit the items,
+        go back to the store, clear the cart, or check out.
+    </p>
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span8">
+
+                <!-- items -->
+                <table class="table table-bordered">
+
+                    <!-- header -->
+                    <tr class="well">
+                        <td><b>Item</b></td>
+                        <td class="tdCenter"><b>Quantity</b></td>
+                        <td class="tdRight"><b>Price</b></td>
+                        <td/>
+                    </tr>
+
+                    <!-- empty cart message -->
+                    <tr ng-hide="cart.getTotalCount() > 0">
+                        <td class="tdCenter" colspan="4">
+                            Your cart is empty.
+                        </td>
+                    </tr>
+
+                    <!-- cart items -->
+                    <tr ng-repeat="item in cart.items | orderBy:'name'">
+                        <td>{{item.name}}</td>
+                        <td class="tdCenter">
+                            <div class="input-append">
+                                <!-- use type=tel instead of  to prevent spinners -->
+                                <input
+                                    class="span3 text-center" type="tel"
+                                    ng-model="item.quantity"
+                                    ng-change="cart.saveItems()"/>
+                                <button
+                                    class="btn btn-success" type="button"
+                                    ng-disabled="item.quantity >= 1000"
+                                    ng-click="cart.addItem(item.sku, item.name, item.price, +1)">+
+                                </button>
+                                <button
+                                    class="btn btn-inverse" type="button"
+                                    ng-disabled="item.quantity <= 1"
+                                    ng-click="cart.addItem(item.sku, item.name, item.price, -1)">-
+                                </button>
+                            </div>
+                        </td>
+                        <td class="tdRight">{{item.price * item.quantity | currency}}</td>
+                        <td class="tdCenter" title="remove from cart">
+                            <a href="" ng-click="cart.addItem(item.sku, item.name, item.price, -10000000)">
+                                <i class="icon-remove"/>
+                            </a>
+                        </td>
+                    </tr>
+
+                    <!-- footer -->
+                    <tr class="well">
+                        <td><b>Total</b></td>
+                        <td class="tdCenter"><b>{{cart.getTotalCount()}}</b></td>
+                        <td class="tdRight"><b>{{cart.getTotalPrice() | currency}}</b></td>
+                        <td/>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- buttons -->
+            <div class="span4">
+                <p class="text-info">
+                    <button
+                        class="btn btn-block btn-danger"
+                        ng-click="cart.clearItems()"
+                        ng-disabled="cart.getTotalCount() < 1">
+                        <i class="icon-trash icon-white"/> clear cart
+                    </button>
+                </p>
+
+                <!--                <br/><br/>-->
+                <!---->
+                <!--                <p class="text-info">-->
+                <!--                    <button-->
+                <!--                        class="btn btn-block btn-primary"-->
+                <!--                        ng-click="cart.checkout('PayPal')"-->
+                <!--                        ng-disabled="cart.getTotalCount() < 1">-->
+                <!--                        <i class="icon-ok icon-white"/> check out using PayPal-->
+                <!--                    </button>-->
+                <!--                    <button-->
+                <!--                        class="btn btn-block btn-primary"-->
+                <!--                        ng-click="cart.checkout('Google')"-->
+                <!--                        ng-disabled="cart.getTotalCount() < 1">-->
+                <!--                        <i class="icon-ok icon-white"/> check out using Google-->
+                <!--                    </button>-->
+                <!--                </p>-->
+                <!---->
+                <!--                <br/><br/>-->
+                <!---->
+                <!--                <p class="text-info">-->
+                <!--                    <button-->
+                <!--                        class="btn btn-block btn-link"-->
+                <!--                        ng-click="cart.checkout('PayPal')"-->
+                <!--                        ng-disabled="cart.getTotalCount() < 1">-->
+                <!--                        <img src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" alt="checkout PayPal"/>-->
+                <!--                    </button>-->
+                <!--                    <button-->
+                <!--                        class="btn btn-block btn-link"-->
+                <!--                        ng-click="cart.checkout('Google')"-->
+                <!--                        ng-disabled="cart.getTotalCount() < 1">-->
+                <!--                        <img src="https://checkout.google.com/buttons/checkout.gif?w=168&h=44&style=white&variant=text"-->
+                <!--                             alt="checkoutGoogle"/>-->
+                <!--                    </button>-->
+                <!--                </p>-->
+            </div>
+        </div>
+    </div>
+</script>

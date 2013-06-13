@@ -1,0 +1,54 @@
+<?php
+/** @var \Bitfalls\Objects\Result $result */
+/** @var \Bitfalls\Utilities\Pagination $pagination */
+?>
+
+<h3>Email Templates: <?php echo $result->count(); ?> found</h3>
+
+<form method="get" action="/admin/emails/list" class="form-search">
+    <input
+        type="text"
+        class="input-medium search-query"
+        name="q"
+        placeholder="Search"
+        value="<?php if (isset($result->getSearchParams()['q'])) echo $result->getSearchParams()['q']; ?>"
+        />
+    <button type="submit" class="btn">Search</button>
+</form>
+
+<?= $pagination; ?>
+
+<table class="bitfalls-datagrid table-bordered table-condensed table-striped table-hover">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Slug</th>
+        <th>Subject</th>
+        <th>Is HTML?</th>
+        <th>Info</th>
+        <th>Options</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php /** @var \EmailsTemplates $oEntity */ ?>
+    <?php foreach ($result as $oEntity) : ?>
+        <tr>
+            <td><?php echo $oEntity->getId(); ?></td>
+            <td><?php echo $oEntity->getName(); ?></td>
+            <td><?php echo $oEntity->getSlug(); ?></td>
+            <td><?php echo $oEntity->getSubject(); ?></td>
+            <td><?php echo ((bool)trim($oEntity->getBodyHtml())) ? '<span class="nope">&#10004;</span>' : '<span class="nope">&times;</span>' ?></td>
+            <td><?php echo $oEntity->getTemplateInfo(); ?></td>
+            <td>
+                <a href="/admin/emails/upsert/id/<?php echo $oEntity->getId(); ?>">Edit</a>
+                |
+                <a onclick="return confirm('Are you sure? This cannot be undone!');"
+                   href="/admin/emails/delete/id/<?php echo $oEntity->getId(); ?>">Delete</a>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<?php echo $pagination; ?>

@@ -1,0 +1,60 @@
+<?php
+/** @var \UserRoles $oEntity */
+/** @var string $sHeading */
+?>
+
+<h3><?php echo $sHeading; ?></h3>
+
+<form class="form-horizontal" action="/admin/roles/upsert" method="post">
+    <input type="hidden" value="<?php echo $oEntity->getId(); ?>" name="id" />
+
+    <div class="control-group">
+        <label class="control-label" for="slug">Slug</label>
+        <div class="controls">
+            <input
+                type="text"
+                required="required"
+                name="slug"
+                id="slug"
+                <?php if ($oEntity->getId()) echo "readonly"; ?>
+                placeholder="Slug"
+                value="<?php echo $oEntity->getSlug(); ?>"
+                >
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="name">Name</label>
+        <div class="controls">
+            <input
+                type="text"
+                required="required"
+                name="name"
+                id="name"
+                placeholder="Name"
+                value="<?php echo $oEntity->getName(); ?>"
+                >
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="description">Description</label>
+        <div class="controls">
+            <input
+                type="text"
+                required="required"
+                name="description"
+                id="description"
+                placeholder="Description"
+                value="<?php echo $oEntity->getDescription(); ?>"
+                >
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="controls">
+            <input type="submit" name="Save" value="Save" />
+        </div>
+    </div>
+
+</form>

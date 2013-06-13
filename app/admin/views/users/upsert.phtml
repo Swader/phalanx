@@ -1,0 +1,115 @@
+<?php
+/** @var \Users $user */
+/** @var string $sHeading */
+/** @var array $allRoles */
+
+$aUserRoleSlugs = array();
+/** @var \UsersRoles $oUsersRoles */
+foreach ($user->usersRoles as $oUsersRoles) {
+    $aUserRoleSlugs[] = $oUsersRoles->getRoleSlug();
+}
+$aUserRoleSlugs = array_unique($aUserRoleSlugs);
+?>
+
+<h3><?php echo $sHeading; ?></h3>
+
+<form class="form-horizontal" ng-non-bindable action="" method="post">
+    <fieldset>
+        <legend>Main information</legend>
+        <input type="hidden" value="<?php echo $user->getId(); ?>" name="id"/>
+
+        <div class="control-group">
+            <label class="control-label" for="username">Username</label>
+
+            <div class="controls">
+                <input
+                    type="text"
+                    required="required"
+                    name="username"
+                    id="username"
+                    placeholder="Username"
+                    value="<?php echo $user->getUsername(); ?>"
+                    >
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="first_name">First Name</label>
+
+            <div class="controls">
+                <input
+                    type="text"
+                    required="required"
+                    name="first_name"
+                    id="first_name"
+                    placeholder="First Name"
+                    value="<?php echo $user->getFirstName(); ?>"
+                    >
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="last_name">Last Name</label>
+
+            <div class="controls">
+                <input
+                    type="text"
+                    required="required"
+                    name="last_name"
+                    id="last_name"
+                    placeholder="Last Name"
+                    value="<?php echo $user->getLastName(); ?>"
+                    >
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="password">Password</label>
+
+            <div class="controls">
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    placeholder="Leave empty to keep old"
+                    >
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="main_contact_email">Main Contact Email</label>
+
+            <div class="controls">
+                <input
+                    type="email"
+                    required="required"
+                    name="main_contact_email"
+                    id="main_contact_email"
+                    placeholder="Email address"
+                    value="<?php if ($user->mainContact) echo $user->mainContact->getEmail(); ?>"
+                    >
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>User roles</legend>
+        <div>
+            <?php /** @var \UserRoles $oRole */
+            foreach ($allRoles as $oRole) : ?>
+                <label class="checkbox">
+                    <input
+                        <?php if (in_array($oRole->getSlug(), $aUserRoleSlugs)) echo 'checked="checked"'; ?>
+                        type="checkbox" value="<?php echo $oRole->getSlug() ?>" name="userRoles[]">
+                    <?php echo $oRole->getName() . ': ' . $oRole->getDescription(); ?>
+                </label>
+            <?php endforeach; ?>
+        </div>
+    </fieldset>
+
+    <hr/>
+    <div>
+        <input type="submit" name="Save" value="Save"/>
+    </div>
+
+</form>

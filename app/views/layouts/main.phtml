@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7" ng-app="tekapoAngular"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8" ng-app="tekapoAngular"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9" ng-app="tekapoAngular"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" ng-app="tekapoAngular"> <!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+
+<!--    <meta name="keywords" content="Tekapo.co, home shopping, home delivery, groceries, groceries delivery">-->
+<!--    <meta name="description" content="Tekapo.co - home delivery of groceries and other goods">-->
+    <meta name="keywords" content="sample, keywords">
+    <meta name="description" content="Sample description">
+    <meta property="og:type" content="website">
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+<!--    <title>Tekapo.co - Groceries delivered to your door</title>-->
+    <title>Sample title</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/img/webicons/fc-webicons.css">
+
+    <script src="/js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+</head>
+
+<body>
+
+<?php echo $this->partial('angularviews'); ?>
+
+<!--[if lte IE 7]>
+<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+    your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to
+    improve your experience.</p>
+<![endif]-->
+
+<div class="container-fluid" ng-controller="AppCtrl">
+    <?php echo $this->partial('../shared/header'); ?>
+    <div class="main-content p1020">
+        <error></error>
+
+        <div class="row main-content">
+            <?php echo $this->getContent(); ?>
+        </div>
+    </div>
+</div>
+
+<script src="/js/vendor/jquery-2.0.1.min.js"></script>
+<script src="/js/vendor/angular.min.js"></script>
+<script src="/js/components/shoppingcart.js"></script>
+<script src="/js/vendor/angular-ui.min.js"></script>
+<script src="/js/vendor/ui-bootstrap-tpls-0.2.0.min.js"></script>
+<script src="/js/vendor/typeahead.js"></script>
+<script src="/js/plugins.js"></script>
+<script src="/js/helpers.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/directives.js"></script>
+<script src="/js/services.js"></script>
+<script src="/js/controllers.js"></script>
+
+<script type="text/javascript">
+    var _gaq = [
+        ['_setAccount', 'UA-XXXXX-X'],
+        ['_trackPageview']
+    ];
+    (function (d, t) {
+        var g = d.createElement(t), s = d.getElementsByTagName(t)[0];
+        g.src = ('https:' == location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js';
+        s.parentNode.insertBefore(g, s)
+    }(document, 'script'));
+</script>
+
+</body>
+
+</html>

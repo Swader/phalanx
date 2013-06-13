@@ -1,0 +1,15 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+    Swader - dev - @bitfalls
+
+# THANKS
+
+    All the guys at H5BP and Twitter Bootstrap
+
+# TECHNOLOGY COLOPHON
+
+    HTML5, CSS3
+    jQuery, Modernizr

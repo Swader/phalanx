@@ -1,0 +1,77 @@
+<?php /** @var \Bitfalls\Objects\Result $result */ ?>
+
+<h3><?php echo $result->count(); ?> residence types total</h3>
+
+<form id="addressrestypeUpsertForm" method="post" action="/admin/addresses/residencetypeupsert">
+    <table class="bitfalls-datagrid table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Slug</th>
+            <th>Description</th>
+            <th>Applied to #</th>
+            <th>Options</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php /** @var \AddressResidenceTypes $oEntity */ ?>
+        <?php $row = 'even';
+        foreach ($result as $oEntity) :
+            $row = ($row == 'even') ? 'odd' : 'even';
+            ?>
+            <tr class="<?php echo $row; ?>">
+                <td>
+                    <?php echo $oEntity->getId(); ?>
+                    <input type="hidden" name="entry[<?php echo $oEntity->getId(); ?>][id]"
+                           value="<?php echo $oEntity->getId(); ?>"/>
+                </td>
+                <td><input class="width90percent nomargin" type="text"
+                           name="entry[<?php echo $oEntity->getId(); ?>][name]"
+                           value="<?php echo $oEntity->getName(); ?>"/></td>
+                <td><?php echo $oEntity->getSlug(); ?></td>
+                <td><textarea class="width90percent nomargin"
+                              name="entry[<?php echo $oEntity->getId(); ?>][description]" rows="1"
+                              cols="15"><?php echo $oEntity->getDescription(); ?></textarea></td>
+                <td><?php echo $oEntity->addresses->count(); ?></td>
+                <td>
+                    <?php if ($oEntity->addresses->count() == 0) : ?>
+                        <a onclick="return confirm('Are you sure?');"
+                           href="/admin/addresses/deleteresidencetype/id/<?php echo $oEntity->getId(); ?>">Delete</a>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td class="options-row" colspan="6">
+                <input class="btn-small btn" type="button" onclick="addNewRow('addressrestypeUpsertForm', 'templateRow')"
+                       value="Add more"/>
+                <input class="btn-small btn" type="submit" name="save" value="Save"
+                       onsubmit="return removeElementById('templateRow')"/>
+            </td>
+        </tr>
+        <tr id="templateRow" class="hidden">
+            <td></td>
+            <td><input class="width90percent nomargin" type="text"
+                       name="entry[new][name][]"
+                       value=""/>
+            </td>
+            <td><input class="width90percent nomargin" type="text"
+                       name="entry[new][slug][]"
+                       value=""/>
+            </td>
+            <td><textarea class="width90percent nomargin"
+                          name="entry[new][description][]" rows="1"
+                          cols="15"></textarea>
+            </td>
+            <td></td>
+            <td>
+                <!--                <input class="btn-small btn" type="button" onclick="removeClosest(event, 'tr')" value="Cancel"/>-->
+            </td>
+
+        </tr>
+        </tfoot>
+    </table>
+</form>

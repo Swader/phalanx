@@ -1,0 +1,97 @@
+<?php
+/** @var EmailsTemplates $oEntity */
+/** @var string $sHeading */
+?>
+
+<h3><?php echo $sHeading; ?></h3>
+
+<form class="form-horizontal" action="/admin/emails/upsert" method="post">
+    <fieldset>
+        <input type="hidden" value="<?php echo $oEntity->getId(); ?>" name="id"/>
+
+        <div class="control-group">
+            <label class="control-label" for="name">Name</label>
+
+            <div class="controls">
+                <input
+                    type="text"
+                    required="required"
+                    name="name"
+                    id="name"
+                    placeholder="Name"
+                    value="<?php echo $oEntity->getName(); ?>"
+                    >
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="slug">Slug</label>
+
+            <div class="controls">
+                <input
+                    type="text"
+                    required="required"
+                    name="slug"
+                    id="slug"
+                    placeholder="Slug"
+                    value="<?php echo $oEntity->getSlug(); ?>"
+                    >
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="subject">Subject</label>
+
+            <div class="controls">
+                <input
+                    type="text"
+                    required="required"
+                    name="subject"
+                    id="subject"
+                    placeholder="Subject"
+                    value="<?php echo $oEntity->getSubject(); ?>"
+                    >
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="body">Body</label>
+
+            <div class="controls">
+                <textarea
+                    required="required"
+                    placeholder="Plain text content"
+                    name="body"
+                    id="body"><?php echo $oEntity->getBody(); ?></textarea>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="body_html">HTML Body</label>
+
+            <div class="controls">
+                <textarea
+                    placeholder="Optional HTML content"
+                    name="body_html"
+                    id="body_html"><?php echo $oEntity->getBodyHtml(); ?></textarea>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="templateinfo">Information / description</label>
+
+            <div class="controls">
+                <textarea
+                    placeholder="Optional information or description of the entry"
+                    name="template_info"
+                    id="templateinfo"><?php echo $oEntity->getTemplateInfo(); ?></textarea>
+            </div>
+        </div>
+
+    </fieldset>
+
+    <div>
+        <input type="submit" name="Save" value="Save"/>
+    </div>
+
+</form>

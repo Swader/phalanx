@@ -1,0 +1,149 @@
+<?php /** @var \Bitfalls\Objects\Result $result_tagtypes */ ?>
+<?php /** @var \Bitfalls\Objects\Result $result_entities */ ?>
+
+<h3><?php echo $result_tagtypes->count(); ?> tag types total</h3>
+
+<form method="post" action="/admin/tag/upsertother"
+      onsubmit="return (removeElementById('templateRow') && removeElementById('templateRow1'))">
+    <table id="tagtypeUpsertForm" class="bitfalls-datagrid table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Applied to #</th>
+            <th>Options</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php /** @var \TagTypes $oEntity */ ?>
+        <?php $row = 'even';
+        foreach ($result_tagtypes as $oEntity) :
+            $row = ($row == 'even') ? 'odd' : 'even';
+            ?>
+            <tr class="<?php echo $row; ?>">
+                <td>
+                    <?php echo $oEntity->getId(); ?>
+                    <input type="hidden" name="tagtype[<?php echo $oEntity->getId(); ?>][id]"
+                           value="<?php echo $oEntity->getId(); ?>"/>
+                </td>
+                <td><input class="nomargin" type="text"
+                           name="tagtype[<?php echo $oEntity->getId(); ?>][type]"
+                           value="<?php echo $oEntity->getType(); ?>"/></td>
+
+                <td><input class="nomargin" type="text"
+                           name="tagtype[<?php echo $oEntity->getId(); ?>][description]"
+                           value="<?php echo $oEntity->getDescription(); ?>"/></td>
+
+                <td><?php echo $oEntity->tags->count(); ?></td>
+                <td>
+                    <?php if ($oEntity->tags->count() == 0) : ?>
+                        <a onclick="return confirm('Are you sure?');"
+                           href="/admin/tag/deletetype/id/<?php echo $oEntity->getId(); ?>">Delete</a>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td class="options-row" colspan="6">
+                <input class="btn-small btn" type="button" onclick="addNewRow('tagtypeUpsertForm', 'templateRow1')"
+                       value="Add more"/>
+                <input class="btn-small btn" type="submit" name="save" value="Save"/>
+            </td>
+        </tr>
+        <tr id="templateRow1" class="hidden">
+            <td></td>
+            <td><input class="width90percent nomargin" type="text"
+                       name="tagtype[new][type][]"
+                       value=""/>
+            </td>
+            <td>
+            <input class="width90percent nomargin" type="text"
+                   name="tagtype[new][description][]"
+                   maxlength="250"
+                   value=""/>
+            </td>
+            <td></td>
+            <td>
+                <!--                <input class="btn-small btn" type="button" onclick="removeClosest(event, 'tr')" value="Cancel"/>-->
+            </td>
+
+        </tr>
+        </tfoot>
+    </table>
+
+    <h3><?php echo $result_entities->count(); ?> entity types total</h3>
+
+    <table id="entitiesUpsertForm" class="bitfalls-datagrid table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Entity</th>
+            <th>Reference Table</th>
+            <th>Description</th>
+            <th>Usages</th>
+            <th>Options</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php /** @var \Entities $oEntity */ ?>
+        <?php $row = 'even';
+        foreach ($result_entities as $oEntity) :
+            $row = ($row == 'even') ? 'odd' : 'even';
+            ?>
+            <tr class="<?php echo $row; ?>">
+                <td>
+                    <?php echo $oEntity->getId(); ?>
+                    <input type="hidden" name="entity[<?php echo $oEntity->getId(); ?>][id]"
+                           value="<?php echo $oEntity->getId(); ?>"/>
+                </td>
+                <td><input class="width90percent nomargin" type="text"
+                           name="entity[<?php echo $oEntity->getId(); ?>][entity]"
+                           value="<?php echo $oEntity->getEntity(); ?>"/></td>
+                <td><input class="width90percent nomargin" type="text"
+                           name="entity[<?php echo $oEntity->getId(); ?>][references]"
+                           value="<?php echo $oEntity->getReferences(); ?>"/></td>
+                <td><input class="width90percent nomargin" type="text"
+                           name="entity[<?php echo $oEntity->getId(); ?>][description]"
+                           value="<?php echo $oEntity->getDescription(); ?>"/></td>
+                <td><?php echo $oEntity->binds->count(); ?></td>
+                <td>
+                    <a onclick="return confirm('Are you sure? Deleting an entity type will remove all binds with that entity as well!');"
+                       href="/admin/tag/deleteentity/id/<?php echo $oEntity->getId(); ?>">Delete</a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td class="options-row" colspan="6">
+                <input class="btn-small btn" type="button" onclick="addNewRow('entitiesUpsertForm', 'templateRow')"
+                       value="Add more"/>
+                <input class="btn-small btn" type="submit" name="save" value="Save"/>
+            </td>
+        </tr>
+        <tr id="templateRow" class="hidden">
+            <td></td>
+            <td><input class="width90percent nomargin" type="text"
+                       name="entity[new][entity][]"
+                       value=""/>
+            </td>
+            <td><input class="width90percent nomargin" type="text"
+                       name="entity[new][references][]"
+                       value=""/>
+            </td>
+            <td><input class="width90percent nomargin" type="text"
+                       name="entity[new][description][]"
+                       value=""/>
+            </td>
+            <td></td>
+            <td>
+                <!--                <input class="btn-small btn" type="button" onclick="removeClosest(event, 'tr')" value="Cancel"/>-->
+            </td>
+
+        </tr>
+        </tfoot>
+    </table>
+</form>

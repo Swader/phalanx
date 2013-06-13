@@ -1,0 +1,76 @@
+<?php
+    $sSiteName = $this->getDi()->get('config')->application->siteName;
+?>
+
+<header>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+
+        <?php if (isset($errorMessage)) : ?>
+            <?php $errorCode = (isset($errorCode)) ? $errorCode : '666' ?>
+            <div class="alert alert-error alert-nomargin" ng-hide="hideError">
+                <a class="close" ng-click="hideError = true">&times;</a>
+                Error
+                #<?php echo $errorCode . ' - ' . $errorMessage; ?>
+                <?php if (ENVIRONMENT == ENVIRONMENT_DEVELOPMENT) : ?>
+                    <a class="icon-question-sign" ng-click="showStack = !showStack"></a>
+                    <div ng-show="showStack"
+                         ng-cloak>
+                        <hr/>
+                        <pre><?php echo (isset($stackTrace)) ? $stackTrace : 'No stack trace'; ?></pre>
+                    </div>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+
+        <div class="navbar-inner">
+            <?php if (!isset($showHomeLink) || $showHomeLink !== false) : ?>
+                <p class="navbar-text pull-left">
+                    <a href="/" title="Home"><?= $sSiteName; ?> Home</a>
+                </p>
+            <?php endif; ?>
+
+            <?php if (Users::getCurrent()) : ?>
+                <p class="navbar-text pull-right">
+                    <a href="/users/logout" title="Sign in">Log out</a>
+                </p>
+                <p class="navbar-text pull-right">
+                    <a href="/users/myaccount" title="My Account">My Account</a>
+                </p>
+            <?php else : ?>
+                <p class="navbar-text pull-right">
+                    <a href="/users/login" title="Sign in">Sign in</a>
+                </p>
+            <?php endif; ?>
+
+            <?php if (Users::getCurrent() && Users::getCurrent()->hasSelfRole('admin')) : ?>
+                <p class="navbar-text pull-right">
+                    <a href="/admin" title="Administration">Administration</a>
+                </p>
+            <?php endif; ?>
+        </div>
+    </nav>
+
+    <div ng-cloak class="header-content-search-area" ng-show="DisplayFlags.showSearchBar">
+        <p class="navbar-text pull-left">
+            <a href="/" title="Home"><?= $sSiteName; ?> home</a>
+        </p>
+
+        <p class="divset pull-left">
+            <searchbox ac="/search/autocomplete" ctrlfn="doSearch(query)"></searchbox>
+        </p>
+        <div class="socialicons pull-right">
+            <a class="fc-webicon facebook small">Like us on Facebook</a>
+            <a class="fc-webicon twitter small">Follow us on Twitter</a>
+            <a class="fc-webicon googleplus small">Circle us on Google Plus</a>
+        </div>
+    </div>
+
+    <?php if (isset($moduleName) && isset($bLoadModuleMenu) && $bLoadModuleMenu) :
+        ?>
+        <div class="moduleMenu header-content-search-area">
+            <?php echo $this->partial('../../' . $moduleName . '/views/partials/menu'); ?>
+        </div>
+    <?php endif; ?>
+
+
+</header>
